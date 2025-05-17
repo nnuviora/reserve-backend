@@ -15,17 +15,34 @@ from services.load_service import LoadService
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
-
 async def auth_dep() -> AuthService:
-    return AuthService(
-        user_repo=UserRepository,
-        refresh_repo=TokenRepository,
-        cache_manager=RedisManager,
-        email_manager=MetaUaSender,
-        security_layer=JWTAuth,
-        error_handler=HTTPException,
-        template_handler=get_template,
-    )
+    try:
+        # print("🔧 auth_dep: створення AuthService...")
+        service = AuthService(
+            user_repo=UserRepository,
+            refresh_repo=TokenRepository,
+            cache_manager=RedisManager,
+            email_manager=MetaUaSender,
+            security_layer=JWTAuth,
+            error_handler=HTTPException,
+            template_handler=get_template,
+        )
+        # print("✅ auth_dep: успішно створено")
+        return service
+    except Exception as e:
+        print("❌ auth_dep помилка:", e)
+        raise e
+
+# async def auth_dep() -> AuthService:
+#     return AuthService(
+#         user_repo=UserRepository,
+#         refresh_repo=TokenRepository,
+#         cache_manager=RedisManager,
+#         email_manager=MetaUaSender,
+#         security_layer=JWTAuth,
+#         error_handler=HTTPException,
+#         template_handler=get_template,
+#     )
 
 
 # email_manager=AwsSender,
