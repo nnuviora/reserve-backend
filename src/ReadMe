@@ -1,0 +1,11 @@
+1. Клонировать репозиторий и отвязать его
+2. Установить виртуальное окружение и подтянуть все из requirements.txt
+3. Настроить подключение к базе данных и Редис
+   - DATABASE_URL=postgresql://<user>:<password>@<host>:<port>/<dbname>
+   - REDIS_URL=redis://<user>:<password>@<host>:<port>
+4. НАстроить Alembic 
+   - alembic init alembic
+   - в alembic.ini изменить sqlalchemy.url = ${DATABASE_URL}
+   - в alembic/env.py изменить config.set_main_option("sqlalchemy.url", str(settings.DATABASE_URL))
+   - и дополнить импортом моделей from myapp.models import Base
+   -а также изменить target_metadata = Base.metadata

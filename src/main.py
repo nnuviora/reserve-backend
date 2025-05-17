@@ -4,6 +4,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
 from api.routers import routers as api_routers
 
+import sys
+import os
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 
 def get_application() -> FastAPI:
 
@@ -18,7 +22,7 @@ def get_application() -> FastAPI:
     origins = [
         "https://nuviora.vercel.app",
         "https://nuviora-frontend-git-dev-nnuvioras-projects.vercel.app",
-        "http://localhost:3000",
+        "http://localhost:8000",
     ]
 
     application.add_middleware(

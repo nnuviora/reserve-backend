@@ -10,8 +10,8 @@ from utils.cache_manager import AbstractCache
 from utils.email_manager import AbstractEmail
 from services.s3_avatar_uploader import S3AvatarUploader
 
-
-class AuthService(Protocol):
+# class AuthService(Protocol):
+class AuthService:
     def __init__(
         self,
         user_repo,
@@ -132,6 +132,8 @@ class AuthService(Protocol):
         except self.error_handler as e:
             raise e
         except Exception as e:
+            # import traceback
+            # traceback.print_exc()  # ← або logger.error(traceback.format_exc())
             raise self.error_handler(status_code=500, detail="Упс! Щось пішло не так. Спробуйте пізніше")
 
     async def _generate_token_pair(self, data: dict, user_agent: Optional[str]) -> dict:

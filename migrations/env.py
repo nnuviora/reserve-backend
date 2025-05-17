@@ -1,14 +1,28 @@
-import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+import sys
+from dotenv import load_dotenv
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
+
+# завантаження .env
+dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
+print(f"Loading .env from: {dotenv_path}")
+load_dotenv(dotenv_path)
+
+# DEBUG — перевіримо, чи змінна дійсно підтягується
+print("PROJECT_NAME:", os.getenv("PROJECT_NAME"))  # має вивести значення
 
 from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 from alembic import context
 
-from config import config_setting
-from database import Base
-from models import *  # Імпортуй інші моделі при потребі
+from src.config import config_setting
+from src.database import Base
+import src.models.user_model
+import src.models.location_model
+
+# Перевіряємо, що моделі підключені
+print("Tables Alembic sees 1:", Base.metadata.tables.keys())
 
 # Alembic Config object
 config = context.config
@@ -17,6 +31,8 @@ config = context.config
 sync_db_uri = config_setting.DB_URI.replace("postgresql+asyncpg", "postgresql+psycopg2")
 config.set_main_option("sqlalchemy.url", sync_db_uri)
 
+print("DB URI used by Alembic:", sync_db_uri)
+
 # Логування
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
@@ -24,6 +40,7 @@ if config.config_file_name is not None:
 # Вказуємо metadata для Alembic
 target_metadata = Base.metadata
 
+print("Tables Alembic sees 2:", Base.metadata.tables.keys())
 
 def run_migrations_offline() -> None:
     context.configure(

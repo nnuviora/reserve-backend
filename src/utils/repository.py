@@ -55,7 +55,7 @@ class SqlLayer(AbstractRepository):
                 res = await session.execute(stmt)
                 res = res.scalar_one_or_none()
                 if res is None:
-                    return False
+                    return None
                 get_logger().info(
                     f"DATA GET: {self.model.__name__} with data: {args}, {kwargs}"
                 )

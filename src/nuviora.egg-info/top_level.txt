@@ -1,0 +1,8 @@
+api
+core
+migrations
+models
+repositories
+schemas
+services
+utils

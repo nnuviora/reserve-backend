@@ -5,7 +5,7 @@ from sqlalchemy.orm import (
 )
 from sqlalchemy import ForeignKey
 
-from database import Base
+from src.database import Base
 
 
 class CountryModel(Base):
