@@ -6,7 +6,8 @@ from sqlalchemy.orm import (
     relationship,
 )
 from sqlalchemy import ForeignKey
-from src.database import Base
+#from src.database import Base
+from database import Base
 
 
 class UserModel(Base):
