@@ -23,6 +23,7 @@ def get_application() -> FastAPI:
         "https://nuviora.vercel.app",
         "https://nuviora-frontend-git-dev-nnuvioras-projects.vercel.app",
         "https://nuviora.fly.dev",
+        "http://localhost:3000",
     ]
 
     application.add_middleware(
