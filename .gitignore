@@ -1,5 +1,5 @@
 .env
 src/venv/
 *__pycache__/
-venv/
-
+venv/ls
+.venv
