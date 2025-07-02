@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 import uuid
 from sqlalchemy import Boolean, DECIMAL, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -14,8 +15,8 @@ class Category(Base):
     description: Mapped[str] = mapped_column(Text)
     #icon: Mapped[str] = mapped_column(String, nullable=True)
 
-    subcategories = relationship("Subcategory", back_populates="category")
-    products = relationship("Product", back_populates="category")
+    subcategories = relationship("Subcategory", back_populates="category", lazy="selectin")
+    products = relationship("Product", back_populates="category", lazy="selectin")
 
     async def to_dict(self):
         return {
@@ -34,8 +35,8 @@ class Subcategory(Base):
 
     category_id: Mapped[int] = mapped_column(ForeignKey("category.category_id"))
 
-    category: Mapped["Category"] = relationship(back_populates="subcategories")
-    products = relationship("Product", back_populates="subcategory")
+    category: Mapped["Category"] = relationship(back_populates="subcategories", lazy="selectin")
+    products = relationship("Product", back_populates="subcategory", lazy="selectin")
 
     async def to_dict(self):
         return {
@@ -53,7 +54,7 @@ class Brand(Base):
     description: Mapped[str] = mapped_column(Text)
     logo_url: Mapped[str] = mapped_column(String, nullable=True)
 
-    products = relationship("Product", back_populates="brand")
+    products = relationship("Product", back_populates="brand", lazy="selectin")
 
     async def to_dict(self):
         return {
@@ -69,8 +70,8 @@ class Product(Base):
     product_id: Mapped[int] = mapped_column(primary_key=True, unique=True)
     name: Mapped[str] = mapped_column(String)
     description: Mapped[str] = mapped_column(Text)
-    small_description: Mapped[str] = mapped_column(Text)
-    #traits_id: Mapped[int] = mapped_column(ForeignKey("traits.traits_id"))
+    small_description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    traits_id: Mapped[int] = mapped_column(ForeignKey("traits.traits_id"))
     price: Mapped[float] = mapped_column(DECIMAL(10, 2))
     availability: Mapped[bool] = mapped_column(Boolean)
     currency: Mapped[str] = mapped_column(String(10))
@@ -86,15 +87,15 @@ class Product(Base):
     benefits: Mapped[str] = mapped_column(Text, nullable=True)
     usage_instructions: Mapped[str] = mapped_column(Text, nullable=True)
 
-    category = relationship("Category", back_populates="products")
-    subcategory = relationship("Subcategory", back_populates="products")
-    brand = relationship("Brand", back_populates="products")
-    traits = relationship("Traits", back_populates="product")
-    images = relationship("ProductImage", back_populates="product")
-    features = relationship("Feature", back_populates="product")
-    reviews = relationship("Review", back_populates="product")
-    variations = relationship("ProductVariation", back_populates="product")
-    subscription = relationship("ProductSubscription", back_populates="product")
+    category = relationship("Category", back_populates="products", lazy="selectin")
+    subcategory = relationship("Subcategory", back_populates="products", lazy="selectin")
+    brand = relationship("Brand", back_populates="products", lazy="selectin")
+    traits = relationship("Traits", back_populates="product", lazy="selectin")
+    images = relationship("ProductImage", back_populates="product", lazy="selectin")
+    features = relationship("Feature", back_populates="product", lazy="selectin")
+    reviews = relationship("Review", back_populates="product", lazy="selectin")
+    variations = relationship("ProductVariation", back_populates="product", lazy="selectin")
+    subscription = relationship("ProductSubscription", back_populates="product", lazy="selectin")
 
 
     async def to_dict(self):
@@ -103,7 +104,7 @@ class Product(Base):
             "name": self.name,
             "description": self.description,
             "small_description": self.small_description,
-            "traits_id": self.traits_id,
+            "traits_id": self.traits[0].traits_id,
             "price": self.price,
             "availability": self.availability,
             "currency": self.currency,
@@ -155,11 +156,11 @@ class Traits(Base):
     traits_name: Mapped[str] = mapped_column(String)
     traits_text: Mapped[str] = mapped_column(Text)
 
-    product: Mapped["Product"] = relationship(back_populates="traits")
+    product: Mapped["Product"] = relationship(back_populates="traits", lazy="selectin")
 
     async def to_dict(self):
         return {
-            "traits_id": self.traits_id,
+            "traits_id": self.traits[0].traits_id,
             "product_id": self.product_id,
             "traits_name": self.traits_name,
             "traits_text": self.traits_text,
@@ -175,14 +176,14 @@ class ProductImage(Base):
     is_main: Mapped[bool] = mapped_column(Boolean, default=False)
     sort_order: Mapped[int] = mapped_column(Integer, default=0)
 
-    product: Mapped["Product"] = relationship(back_populates="images")
+    product: Mapped["Product"] = relationship(back_populates="images", lazy="selectin")
 
     async def to_dict(self):
         return {
             "product_image_id": self.product_image_id,
             "product_id": self.product_id,
             "image_description": self.image_description,
-            "image_urls": self.image_urls,
+            "image_url": self.image_url,
             "is_main": self.is_main,
             "sort_order": self.sort_order
         }
@@ -196,7 +197,7 @@ class Feature(Base):
     feature_text: Mapped[str] = mapped_column(Text)
     feature_value: Mapped[str] = mapped_column(String, nullable=True)
 
-    product: Mapped["Product"] = relationship(back_populates="features")
+    product: Mapped["Product"] = relationship(back_populates="features", lazy="selectin")
 
     async def to_dict(self):
         return {
@@ -218,7 +219,7 @@ class Review(Base):
     created_at: Mapped[datetime] = mapped_column(default=datetime.now())
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), nullable=True)
 
-    product: Mapped["Product"] = relationship(back_populates="reviews")
+    product: Mapped["Product"] = relationship(back_populates="reviews", lazy="selectin")
 
     async def to_dict(self):
         return {
@@ -240,7 +241,7 @@ class ProductSubscription(Base):
     is_notified: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(default=datetime.now())
 
-    product: Mapped["Product"] = relationship(back_populates="subscription")
+    product: Mapped["Product"] = relationship(back_populates="subscription", lazy="selectin")
 
     async def to_dict(self):
         return {

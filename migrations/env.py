@@ -18,8 +18,8 @@ from alembic import context
 
 from src.config import config_setting
 from src.database import Base
-import src.models.user_model
-import src.models.location_model
+from src.models.product_model import Base
+
 
 # Перевіряємо, що моделі підключені
 print("Tables Alembic sees 1:", Base.metadata.tables.keys())
