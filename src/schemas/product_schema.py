@@ -137,6 +137,7 @@ class ProductSearchSuggestionSchema(BaseModel):
     name: str
     category_name: Optional[str] = None
     brand_name: Optional[str] = None
+    main_image_url: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -177,7 +178,7 @@ class ProductSubscriptionSchema(BaseModel):
         from_attributes = True
 
 
-class ProductSubscriptionResponse(BaseModel):
+class ProductSubscriptionResponse(ProductSubscriptionSchema):
     message: str
 
     class Config:
@@ -253,3 +254,8 @@ class ProductImportSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+class ProductStatsSchema(BaseModel):
+    total_products: int
+    in_stock_count: int
+    avg_price: float

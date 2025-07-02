@@ -10,5 +10,5 @@ routers = [
     auth_router,
     one_user_router,
     avatar_router,
-    product_router
+    product_router,
 ]
